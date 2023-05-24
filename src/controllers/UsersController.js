@@ -50,28 +50,29 @@ class UsersController {
         }
 
         if (password && old_password) {
-            const checkOldPassword = compare(old_password, user.password)
+            const checkOldPassword = await compare(old_password, user.password)
 
             if(!checkOldPassword) {
                 throw new AppError("A senha antiga nao confere")
             }
 
-            user.password = await hash(password, 8)
+            user.password = await hash(password, 8);
         }
 
-        user.name = name;
-        user.email = email;
+        user.name = name ?? user.name;
+        user.email = email ?? user.email;
 
         await database.run(`
         UPDATE users SET 
         name = ?,
         email = ?,
-        updated_at = ?
+        password = ?,
+        updated_at = DATETIME('now')
         WHERE id = ?`,
-        [user.name, user.email, user.password, new Date(), id]
+        [user.name, user.email, user.password, id]
         );
 
-        return response.status(200).json;
+        return response.json();
     }
 }
 

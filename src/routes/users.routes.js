@@ -6,7 +6,6 @@ const usersController = new UsersController();
 
 usersRoutes = Router();
 
-
 usersRoutes.post('/', usersController.create);
 usersRoutes.put("/:id", usersController.update);
 
